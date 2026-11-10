@@ -1,0 +1,324 @@
+import 'package:flutter/material.dart';
+
+void main() => runApp(const SkycastApp());
+
+class SkycastApp extends StatelessWidget {
+  const SkycastApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Skycast',
+      debugShowCheckedModeBanner: false,
+      theme: ThemeData(
+        useMaterial3: true,
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: const Color(0xFF1683DD),
+        ),
+        scaffoldBackgroundColor: const Color(0xFFF3F8FE),
+      ),
+      home: const WeatherHome(),
+    );
+  }
+}
+
+class WeatherHome extends StatefulWidget {
+  const WeatherHome({super.key});
+
+  @override
+  State<WeatherHome> createState() => _WeatherHomeState();
+}
+
+class _WeatherHomeState extends State<WeatherHome> {
+  final TextEditingController _cityController = TextEditingController();
+
+  String _city = 'New Delhi';
+
+  // Fixed demonstration values, not live weather observations.
+  static const int _temperature = 28;
+  static const int _humidity = 62;
+  static const int _cloudCover = 35;
+  static const int _windSpeed = 12;
+  static const String _airQuality = 'Moderate';
+
+  void _searchCity() {
+    final query = _cityController.text.trim();
+    if (query.isEmpty) return;
+
+    setState(() => _city = query);
+    FocusManager.instance.primaryFocus?.unfocus();
+  }
+
+  @override
+  void dispose() {
+    _cityController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: SafeArea(
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            final width = constraints.maxWidth;
+            final horizontalPadding = width < 360 ? 16.0 : 20.0;
+
+            return SingleChildScrollView(
+              padding: EdgeInsets.fromLTRB(
+                horizontalPadding, 16, horizontalPadding, 24,
+              ),
+              child: Center(
+                child: ConstrainedBox(
+                  constraints: const BoxConstraints(maxWidth: 600),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      Row(
+                        children: [
+                          const Icon(
+                            Icons.wb_sunny_rounded,
+                            color: Color(0xFF1683DD),
+                            size: 30,
+                          ),
+                          const SizedBox(width: 10),
+                          Text(
+                            'Skycast',
+                            style: Theme.of(context)
+                                .textTheme.headlineSmall?.copyWith(
+                                  fontWeight: FontWeight.bold,
+                                  color: const Color(0xFF173C62),
+                                ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 16),
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 14, vertical: 10,
+                        ),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFFFFF1C9),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: const Row(
+                          children: [
+                            Icon(Icons.info_outline, size: 20),
+                            SizedBox(width: 8),
+                            Expanded(
+                              child: Text(
+                                'UI preview · sample data',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 14,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: 18),
+                      Container(
+                        padding: const EdgeInsets.all(24),
+                        decoration: BoxDecoration(
+                          gradient: const LinearGradient(
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight,
+                            colors: [
+                              Color(0xFF69C7FF),
+                              Color(0xFF1683DD),
+                              Color(0xFF1256A6),
+                            ],
+                          ),
+                          borderRadius: BorderRadius.circular(28),
+                          boxShadow: [
+                            BoxShadow(
+                              color: const Color(0xFF1683DD)
+                                  .withValues(alpha: 0.20),
+                              blurRadius: 22,
+                              offset: const Offset(0, 10),
+                            ),
+                          ],
+                        ),
+                        child: Column(
+                          children: [
+                            const Text(
+                              'WEATHER IN',
+                              style: TextStyle(
+                                color: Colors.white70,
+                                letterSpacing: 2,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                            const SizedBox(height: 8),
+                            Text(
+                              _city,
+                              textAlign: TextAlign.center,
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 29,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            const SizedBox(height: 16),
+                            const Icon(
+                              Icons.wb_cloudy_rounded,
+                              size: 100,
+                              color: Color(0xFFFFE08A),
+                            ),
+                            const SizedBox(height: 8),
+                            const Text(
+                              '$_temperature°C',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 68,
+                                fontWeight: FontWeight.w300,
+                              ),
+                            ),
+                            const Text(
+                              'Partly cloudy · Sample weather',
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 15,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: 24),
+                      Text(
+                        'Search city',
+                        style: Theme.of(context)
+                            .textTheme.titleMedium?.copyWith(
+                              fontWeight: FontWeight.bold,
+                            ),
+                      ),
+                      const SizedBox(height: 10),
+                      TextField(
+                        key: const Key('citySearchField'),
+                        controller: _cityController,
+                        textInputAction: TextInputAction.search,
+                        onSubmitted: (_) => _searchCity(),
+                        decoration: InputDecoration(
+                          hintText: 'Enter city name',
+                          prefixIcon: const Icon(Icons.search),
+                          filled: true,
+                          fillColor: Colors.white,
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(16),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 10),
+                      FilledButton.icon(
+                        key: const Key('searchButton'),
+                        onPressed: _searchCity,
+                        icon: const Icon(Icons.search),
+                        label: const Text('Search'),
+                        style: FilledButton.styleFrom(
+                          minimumSize: const Size.fromHeight(52),
+                        ),
+                      ),
+                      const SizedBox(height: 24),
+                      Text(
+                        'Weather details',
+                        style: Theme.of(context)
+                            .textTheme.titleLarge?.copyWith(
+                              fontWeight: FontWeight.bold,
+                            ),
+                      ),
+                      const SizedBox(height: 12),
+                      GridView.count(
+                        crossAxisCount: 2,
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
+                        mainAxisSpacing: 12,
+                        crossAxisSpacing: 12,
+                        childAspectRatio: width < 360 ? 1.3 : 1.5,
+                        children: const [
+                          WeatherDetail(
+                            icon: Icons.water_drop_outlined,
+                            label: 'Humidity',
+                            value: '$_humidity%',
+                          ),
+                          WeatherDetail(
+                            icon: Icons.cloud_outlined,
+                            label: 'Cloud cover',
+                            value: '$_cloudCover%',
+                          ),
+                          WeatherDetail(
+                            icon: Icons.air,
+                            label: 'Wind speed',
+                            value: '$_windSpeed km/h',
+                          ),
+                          WeatherDetail(
+                            icon: Icons.eco_outlined,
+                            label: 'Air quality',
+                            value: _airQuality,
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 16),
+                      const Text(
+                        'All values are illustrative and remain unchanged '
+                        'when searching for another city.',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          color: Color(0xFF60758B),
+                          fontSize: 12,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            );
+          },
+        ),
+      ),
+    );
+  }
+}
+
+class WeatherDetail extends StatelessWidget {
+  const WeatherDetail({
+    super.key,
+    required this.icon,
+    required this.label,
+    required this.value,
+  });
+
+  final IconData icon;
+  final String label;
+  final String value;
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      color: Colors.white,
+      elevation: 0,
+      child: Padding(
+        padding: const EdgeInsets.all(14),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(icon, color: const Color(0xFF1683DD), size: 27),
+            const SizedBox(height: 8),
+            Text(label, style: const TextStyle(color: Color(0xFF60758B))),
+            const SizedBox(height: 5),
+            Text(
+              value,
+              maxLines: 1,
+              style: const TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}

@@ -1,0 +1,56 @@
+Stage 2: connect our Flutter Android weather UI to real ApiClay data.
+I executed the actual ApiClay.com Weather playground using London. HTTP 200 succeeded. Below are the cURL and the actual JSON. The token is deliberately replaced with a placeholder. Never put it in Flutter, a prompt, logs, or GitHub.
+
+CURL:
+curl -X POST 'https://api.apiclay.com/v1/api/weather/current' \
+  -H 'token: YOUR_APICLAY_TOKEN' \
+  -H 'Content-Type: application/json' \
+  -d '{"location":"London"}'
+LIVE JSON:
+{
+  "air_quality": {
+    "co": 240,
+    "gb-defra-index": 2,
+    "no2": 46.5,
+    "o3": 7,
+    "pm10": 25.5,
+    "pm2_5": 20.6,
+    "so2": 4.2,
+    "us-epa-index": 2
+  },
+  "cloud": 10,
+  "gust": 18.8,
+  "heatindex": 7.1,
+  "humidity": 87,
+  "location": {
+    "country": "United Kingdom",
+    "lat": 51.5171,
+    "localtime": "2026-11-09 23:15",
+    "localtime_epoch": 1794266105,
+    "lon": -0.1062,
+    "name": "London",
+    "region": "City of London, Greater London",
+    "tz_id": "Europe/London"
+  },
+  "temperature": 7.1,
+  "uv": 0,
+  "wind": "5.1|ENE"
+}
+
+Build only this weather app in its own repository named flutter-weather-app. Keep our polished gradient UI, but replace sample values with live data. Start with an empty state, let the viewer enter London, then Tokyo. Include loading, readable error, retry and empty-input handling. Never invent weather conditions, forecasts or units. This endpoint does not document temperature/wind units, so label them as API values; humidity and cloud are percentages, EPA air quality is an index category. Show source ApiClay, location country and local time.
+
+Use Flutter http package (already available 1.6.0) with an injectable http.Client for meaningful widget tests, and a 35-second request timeout. Backend URL uses String.fromEnvironment('API_BASE_URL', defaultValue: 'http://127.0.0.1:8787'). On Android use adb reverse tcp:8787 tcp:8787 for debug; do not expose a LAN port. Cleartext allowed ONLY in android/app/src/debug/AndroidManifest.xml. Main AndroidManifest includes INTERNET permission; release must use HTTPS.
+
+Server: Node.js 22+, no dependencies, server/server.mjs, GET /health and GET /weather?q=London. Read APICLAY_TOKEN only from environment; POST upstream with token header. Return small normalized JSON: location,country,localTime,temperature,humidity,cloud,wind,uv,airQuality. No CORS needed. Bind 127.0.0.1 by default. Reject empty queries or over 100 characters, sanitize upstream errors, 30-second timeout, 5-minute cache, cap 30 upstream calls per hour. Export createApp({token,fetchImpl,now}) for tests. Cache cap 100. No public production deployment or fake security claims.
+
+Return COMPLETE files, each in one code block with a heading naming its path:
+1 lib/main.dart (aim <300 lines)
+2 test/widget_test.dart (fake http client; live data display, empty validation, upstream failure; scroll button into view and avoid duplicate heading/input text selectors)
+3 server/server.mjs
+4 server/server.test.mjs (real HTTP local server, fake upstream; request mapping, token not returned, validation, upstream failure, cache)
+5 server/package.json (start node --env-file=.env server.mjs, test node --test)
+6 server/.env.example (placeholder only)
+7 android/app/src/debug/AndroidManifest.xml
+8 Exact commands to install http, copy .env.example, privately set token in .env, test, run backend, adb reverse, flutter run, stop backend.
+
+Keep explanation beginner-friendly with expected results. Never git commit, push or create a PR. Do not claim App Store or Play Store release is complete. This tutorial is Android only.

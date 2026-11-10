@@ -1,0 +1,15 @@
+{
+  "recorded_date": "2026-11-09",
+  "flutter_analyze": "pass",
+  "flutter_widget_tests": 4,
+  "backend_tests": 7,
+  "android_build": "debug arm64 passed",
+  "live_searches": [
+    "London",
+    "Tokyo"
+  ],
+  "notes": [
+    "Temperature and wind units are not specified by this API listing; labels say API value.",
+    "Release deployment, signing and Google Play submission remain separate."
+  ]
+}

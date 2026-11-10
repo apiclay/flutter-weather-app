@@ -1,0 +1,105 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_test/flutter_test.dart';
+import 'package:weather_app/main.dart';
+
+void main() {
+  // Finds the displayed city heading, not the editable search field.
+  Finder cityHeading(String city) {
+    return find.descendant(
+      of: find.byType(Container),
+      matching: find.byWidgetPredicate(
+        (widget) =>
+            widget is Text &&
+            widget.data == city &&
+            widget.textAlign == TextAlign.center &&
+            widget.style?.fontSize == 29,
+      ),
+    );
+  }
+
+  // Scrolls the real Search button into view before tapping.
+  Future<void> tapSearchButton(WidgetTester tester) async {
+    final button = find.byKey(const Key('searchButton'));
+
+    await tester.ensureVisible(button);
+    await tester.pumpAndSettle();
+
+    expect(button, findsOneWidget);
+
+    await tester.tap(button);
+    await tester.pumpAndSettle();
+  }
+
+  testWidgets('Displays the sample data warning', (tester) async {
+    await tester.pumpWidget(const SkycastApp());
+
+    expect(find.text('Skycast'), findsOneWidget);
+    expect(find.text('UI preview · sample data'), findsOneWidget);
+
+    expect(cityHeading('New Delhi'), findsOneWidget);
+    expect(find.text('28°C'), findsOneWidget);
+    expect(find.text('Humidity'), findsOneWidget);
+    expect(find.text('Air quality'), findsOneWidget);
+  });
+
+  testWidgets('Search updates the displayed city', (tester) async {
+    await tester.pumpWidget(const SkycastApp());
+
+    expect(cityHeading('New Delhi'), findsOneWidget);
+
+    await tester.enterText(
+      find.byKey(const Key('citySearchField')),
+      'Mumbai',
+    );
+
+    await tapSearchButton(tester);
+
+    expect(cityHeading('Mumbai'), findsOneWidget);
+    expect(cityHeading('New Delhi'), findsNothing);
+
+    // Sample weather remains unchanged after searching.
+    expect(find.text('28°C'), findsOneWidget);
+    expect(find.text('UI preview · sample data'), findsOneWidget);
+  });
+
+  testWidgets('Empty city search does not replace city', (tester) async {
+    await tester.pumpWidget(const SkycastApp());
+
+    expect(cityHeading('New Delhi'), findsOneWidget);
+
+    await tester.enterText(
+      find.byKey(const Key('citySearchField')),
+      '   ',
+    );
+
+    // Actually scroll to and tap the Search button.
+    await tapSearchButton(tester);
+
+    // Whitespace-only input must not change the city.
+    expect(cityHeading('New Delhi'), findsOneWidget);
+
+    // Verify the sample-data warning remains visible.
+    expect(find.text('UI preview · sample data'), findsOneWidget);
+  });
+
+  testWidgets('Keyboard search submits city', (tester) async {
+    await tester.pumpWidget(const SkycastApp());
+
+    final searchField = find.byKey(const Key('citySearchField'));
+
+    await tester.enterText(searchField, 'Bengaluru');
+
+    await tester.testTextInput.receiveAction(
+      TextInputAction.search,
+    );
+
+    await tester.pumpAndSettle();
+
+    // Check the displayed heading, not the TextField content.
+    expect(cityHeading('Bengaluru'), findsOneWidget);
+    expect(cityHeading('New Delhi'), findsNothing);
+
+    // Verify the sample-data label remains present.
+    expect(find.text('UI preview · sample data'), findsOneWidget);
+  });
+}

@@ -1,0 +1,13 @@
+I am a beginner building a real Flutter Android weather app called Skycast, one app in one repository named flutter-weather-app. Guide me one stage at a time.
+
+STAGE 1: create the working UI with clearly labelled sample data. Later I will give you an actual ApiClay cURL request and JSON response to add live data through a private Node.js backend.
+
+Use current stable Flutter, Material 3, no extra packages for this first stage. Create a polished sky-blue gradient header, a large sun/cloud icon, city search field and Search button, a large temperature card, and readable humidity, cloud, wind and air-quality cards. Make it responsive on a Pixel 7. Show a prominent "UI preview · sample data" label so nobody confuses it with live weather. Searching a city should update the displayed city using sample values. Use no network request or API token yet.
+
+Give me:
+1. Exact terminal commands to create the Android-only Flutter project with package name weather_app and organization com.apiclay.tutorials.
+2. The COMPLETE lib/main.dart in one Dart code block (prefer under 220 lines, no ellipses or omitted widgets).
+3. The COMPLETE test/widget_test.dart with meaningful tests for the initial sample label and entering a different city.
+4. Commands to run flutter analyze, the widget test and the app on an Android emulator, with a short plain-English explanation of where each command runs.
+
+Make the code easy to follow and compatible with Flutter 3.47.6 / Dart 3.13.5. Never create commits or push anything. Do not integrate an API in this first stage.

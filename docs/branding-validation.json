@@ -1,0 +1,10 @@
+{
+  "app": "Skycast",
+  "android_debug_arm64_build": "passed",
+  "compiled_application_label": "Skycast",
+  "compiled_adaptive_launcher_resource": "res/mipmap-anydpi-v26/ic_launcher.xml",
+  "apk_sha256": "9280fc8981cc39da761f20d60afbe14020fe62de301e8b9b29b1d82e0a46a318",
+  "visual_review": "Generated icon and cover inspected. Installed launcher verification pending because emulator startup was blocked by insufficient host disk space.",
+  "artwork_method": "Built-in image generation; FFmpeg size exports",
+  "source_archive_includes_gradle_wrapper": true
+}

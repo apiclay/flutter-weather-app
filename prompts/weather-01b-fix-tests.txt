@@ -1,0 +1,6 @@
+I used your exact files. flutter analyze passed. Two widget tests failed. Fix the tests without hiding failures or changing the UI just to satisfy a test. Return the COMPLETE corrected test/widget_test.dart.
+
+1. Search updates the displayed city: the button is at Offset(400, 631), outside the default test view Size(800, 600). tester.tap misses it, so New Delhi stays displayed.
+2. Keyboard search submits city: find.text('Bengaluru') finds two matches: the city heading and the editable search field.
+
+Scroll the real button into view before tapping, and distinguish the displayed heading from editable input. Also make the empty-query test prove that the city remains unchanged after the button really gets tapped. Keep all four test cases.
